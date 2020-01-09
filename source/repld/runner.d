@@ -66,7 +66,9 @@ class REPLRunner {
         try {
             if (auto decl = parseResult.peek!(VariableDeclaration)) {
                 foreach (d; decl.declarators) {
-                    evaluator.evalVarDecl(getType(*decl), d.name.text, conv(d.initializer.tokens));
+                    auto type = getType(*decl);
+                    auto value = d.initializer ? conv(d.initializer.tokens) : type.format!"(%s).init";
+                    evaluator.evalVarDecl(type, d.name.text, value);
                 }
                 return success;
             }
@@ -178,6 +180,7 @@ unittest {
     auto runner = new REPLRunner();
     shouldSuccess(runner.run(q{ int x = 3; }));
     shouldSuccess(runner.run(q{ double y = 3.1415; }));
+    shouldSuccess(runner.run(q{ int s; }));
     shouldSuccess(runner.run(q{ import std; }));
     shouldFailure(runner.run(q{ import unknownPackage; }));
     shouldSuccess(runner.run(q{ auto z = x * y; }));
