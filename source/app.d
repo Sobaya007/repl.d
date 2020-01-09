@@ -1,7 +1,15 @@
 import std;
 import repld;
 
+version (linux) import etc.linux.memoryerror;
+
 void main() {
+    version (linux)
+    {
+        bool registered = registerMemoryErrorHandler();
+        scope (exit)
+            if (registered) deregisterMemoryErrorHandler();
+    }
     auto runner = new REPLRunner();
     bool shouldExit = false;
     runner["exit"] = { shouldExit = true; };
