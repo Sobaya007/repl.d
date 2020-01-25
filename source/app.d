@@ -4,8 +4,7 @@ import repld;
 version (linux) import etc.linux.memoryerror;
 
 void main() {
-    version (linux)
-    {
+    version (linux) {
         bool registered = registerMemoryErrorHandler();
         scope (exit)
             if (registered) deregisterMemoryErrorHandler();
